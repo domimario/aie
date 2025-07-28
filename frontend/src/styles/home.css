@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+.custom-font {
+  font-family: 'Poppins', sans-serif;
+}
+
+.custom-paragraph, p {
+  color: #f5f5f5 !important; /* Ngjyrë e bardhë-gri për lexueshmëri */
+  font-size: 1.05rem;
+  line-height: 1.8;
+  opacity: 0.95;
+}
+
+h1, h2, h3, h4 {
+  color: #ffffff;
+}

@@ -1,0 +1,51 @@
+:root {
+  --bs-body-bg: hsl(222.2, 84%, 4.9%);
+  --bs-body-color: hsl(210, 40%, 98%);
+  --bs-card-bg: hsl(222.2, 84%, 4.9%);
+  --bs-card-border-color: hsl(217.2, 32.6%, 17.5%);
+  --bs-primary: hsl(220, 70%, 50%);
+  --bs-secondary: hsl(160, 60%, 45%);
+  --bs-success: hsl(30, 80%, 55%);
+  --bs-info: hsl(280, 65%, 60%);
+  --bs-danger: hsl(340, 75%, 55%);
+}
+
+/* Gradient backgrounds */
+.bg-gradient-blue {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+}
+
+.bg-gradient-green {
+  background: linear-gradient(135deg, #22c55e, #10b981);
+}
+
+.bg-gradient-purple {
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Smooth animations */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
