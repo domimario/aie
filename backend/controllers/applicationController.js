@@ -1,6 +1,9 @@
 const Application = require('../models/applicationModel');
 
 const submitApplication = async (req, res) => {
+
+  console.log(req.body);
+  
   try {
     const {
       fullName,
@@ -44,6 +47,7 @@ const submitApplication = async (req, res) => {
       documents,
       prototypeUrl,
       status: 'I Ri',
+      assignedExpert: null,
       createdBy: null, // public submission
     });
 
@@ -118,6 +122,8 @@ const assignExpert = async (req, res) => {
   try {
     const { expertId } = req.body;
     const application = await Application.findById(req.params.id);
+
+    console.log(expertId);
     
 
     if (!application) {
@@ -125,6 +131,7 @@ const assignExpert = async (req, res) => {
     }
 
     application.assignedExpert = expertId;
+    console.log(application)
     await application.save();
     res.json(application);
   } catch (error) {

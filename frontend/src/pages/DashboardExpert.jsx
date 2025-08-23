@@ -34,7 +34,7 @@ const DashboardExpert = () => {
 
   const fetchMyApplications = async () => {
     try {
-      const res = await api.get("/applications/my-applications");
+      const res = await api.get("/applications/my");
       console.log("Expert Applications from Backend:", res.data);
 
       setApplications(res.data);

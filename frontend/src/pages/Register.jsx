@@ -35,7 +35,8 @@ export default function Register() {
     try {
       const res = await axios.post(
         "http://localhost:5000/api/users/register",
-        form
+        form,
+        { headers: { "Content-Type": "application/json" } }
       );
 
       localStorage.setItem("token", res.data.token);

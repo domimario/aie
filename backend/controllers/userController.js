@@ -5,7 +5,10 @@ const asyncHandler = require('express-async-handler');
 
 //generate token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+  token = jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+  console.log(token);
+  return token;
+  
 };
 
 //regist new user

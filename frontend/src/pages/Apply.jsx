@@ -85,10 +85,12 @@ const Apply = () => {
                   }
                 });
 
+                console.log(formData);
+
                 await axios.post(
                   "http://localhost:5000/api/applications/submit",
                   formData,
-                  { headers: { "Content-Type": "multipart/form-data" } }
+                  { headers: { "Content-Type": "application/json" } }
                 );
 
                 toast.success(" Aplikimi u dërgua me sukses!");
