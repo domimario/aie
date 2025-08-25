@@ -13,6 +13,9 @@ import {
 } from "recharts";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, Button, Form, Card, Badge } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const COLORS = ["#36A2EB", "#4BC0C0", "#FF6384", "#FFCE56"];
 
@@ -27,6 +30,7 @@ const DashboardExpert = () => {
   const [selectedApp, setSelectedApp] = useState(null);
   const [showDetail, setShowDetail] = useState(false);
   const [note, setNote] = useState("");
+  const [suggestedStatus, setSuggestedStatus] = useState("");
 
   useEffect(() => {
     fetchMyApplications();
@@ -35,11 +39,8 @@ const DashboardExpert = () => {
   const fetchMyApplications = async () => {
     try {
       const res = await api.get("/applications/my");
-      console.log("Expert Applications from Backend:", res.data);
-
       setApplications(res.data);
 
-      
       const total = res.data.length;
       const byField = {};
       const byStatus = {};
@@ -60,19 +61,47 @@ const DashboardExpert = () => {
     }
   };
 
-  const handleAddNote = async () => {
-    try {
-      const res = await api.post(`/applications/${selectedApp._id}/add-note`, {
-        note,
-      });
-      console.log("Note added:", res.data);
-      alert("Shënimi u shtua me sukses!");
-      setShowDetail(false);
-      fetchMyApplications();
-    } catch (err) {
-      console.error("Error adding note:", err);
-    }
-  };
+const handleAddNote = async () => {
+  if (!note.trim()) {
+    toast.warning("Ju lutem shkruani shënimin.");
+    return;
+  }
+
+  try {
+    const res = await api.post(
+      `/applications/${selectedApp._id}/add-note`,
+      {
+        text: note,
+        suggestedStatus: suggestedStatus || null,
+      }
+    );
+    toast.success("Shënimi u shtua me sukses!");
+    setNote("");
+    setSuggestedStatus("");
+    setShowDetail(false);
+    fetchMyApplications();
+  } catch (err) {
+    toast.error("Gabim në shtimin e shënimit!");
+    console.error("Error adding note:", err);
+  }
+};
+
+// Edit note
+const handleEditNote = async (noteId, newText) => {
+  if (!newText.trim()) return;
+
+  try {
+    const res = await api.put(
+      `/applications/${selectedApp._id}/edit-note/${noteId}`,
+      { text: newText }
+    );
+    toast.info("Shënimi u përditësua!");
+    fetchMyApplications();
+  } catch (err) {
+    toast.error("Gabim në editimin e shënimit!");
+    console.error("Error editing note:", err);
+  }
+};
 
   const formatChartData = (obj) =>
     Object.keys(obj).map((key, index) => ({
@@ -87,7 +116,6 @@ const DashboardExpert = () => {
         Dashboard Ekspert
       </h1>
 
-      
       <div className="row text-center mb-4">
         <div className="col-md-4">
           <Card className="shadow-sm p-3">
@@ -98,22 +126,17 @@ const DashboardExpert = () => {
         <div className="col-md-4">
           <Card className="shadow-sm p-3">
             <h6 className="text-muted">Statuset</h6>
-            <h2 className="text-success">
-              {Object.keys(stats.byStatus).length}
-            </h2>
+            <h2 className="text-success">{Object.keys(stats.byStatus).length}</h2>
           </Card>
         </div>
         <div className="col-md-4">
           <Card className="shadow-sm p-3">
             <h6 className="text-muted">Bashki</h6>
-            <h2 className="text-success">
-              {Object.keys(stats.byMunicipality).length}
-            </h2>
+            <h2 className="text-success">{Object.keys(stats.byMunicipality).length}</h2>
           </Card>
         </div>
       </div>
 
-      
       <div className="row mb-5">
         <div className="col-md-6">
           <h5 className="text-center text-muted">Sipas Statusit</h5>
@@ -152,7 +175,8 @@ const DashboardExpert = () => {
         <thead className="table-success">
           <tr>
             <th>Titulli</th>
-            <th>Aplikanti</th>
+            <th>Emri</th>
+            <th>Mbiemri</th>
             <th>Bashkia</th>
             <th>Statusi</th>
             <th>Veprime</th>
@@ -162,7 +186,8 @@ const DashboardExpert = () => {
           {applications.map((app) => (
             <tr key={app._id}>
               <td>{app.projectTitle}</td>
-              <td>{app.fullName}</td>
+              <td>{app.firstName}</td>
+              <td>{app.lastName}</td>
               <td>{app.municipality}</td>
               <td>
                 <Badge bg="info">{app.status}</Badge>
@@ -183,47 +208,109 @@ const DashboardExpert = () => {
         </tbody>
       </table>
 
-      <Modal show={showDetail} onHide={() => setShowDetail(false)} size="lg">
-        <Modal.Header closeButton>
-          <Modal.Title>Detajet e Projektit</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedApp && (
-            <div>
-              <p>
-                <b>Titulli:</b> {selectedApp.projectTitle}
-              </p>
-              <p>
-                <b>Përshkrimi:</b> {selectedApp.description}
-              </p>
-              <p>
-                <b>Fushat:</b> {selectedApp.innovationFields.join(", ")}
-              </p>
-              <p>
-                <b>Statusi:</b> {selectedApp.status}
-              </p>
+      {/* Modal Detaje dhe Notes */}
+<Modal show={showDetail} onHide={() => setShowDetail(false)} size="lg">
+  <Modal.Header closeButton>
+    <Modal.Title>Detajet e Projektit</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {selectedApp && (
+      <>
+        {/* ---------------- Detajet e Projektit ---------------- */}
+        <Card className="mb-3 shadow-sm p-3">
+          <p><b>Titulli:</b> {selectedApp.projectTitle}</p>
+          <p><b>Përshkrimi:</b> {selectedApp.description}</p>
+          <p><b>Fushat:</b> {selectedApp.innovationFields.join(", ")}</p>
+          <p><b>Statusi:</b> <Badge bg="info">{selectedApp.status}</Badge></p>
+        </Card>
 
-              <Form.Group className="mt-3">
-                <Form.Label>Shto një shënim për këtë projekt</Form.Label>
+        {/* ---------------- Shënimet ekzistuese ---------------- */}
+        <h6>Shënimet e mëparshme</h6>
+        {selectedApp.notes && selectedApp.notes.length > 0 ? (
+          selectedApp.notes.map((n) => (
+            <Card key={n._id} className="border mb-2 p-2">
+              <div className="d-flex justify-content-between align-items-start">
+                <div>
+                  <b>{n.user.name} ({n.fromRole})</b>{" "}
+                  <small className="text-muted">
+                    {new Date(n.date).toLocaleString()}
+                  </small>
+                  {n.suggestedStatus && (
+                    <Badge bg="warning" className="ms-2">
+                      {n.suggestedStatus}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
+              {/* Editable vetëm për ekspertin e caktuar */}
+              {selectedApp.assignedExpert === n.user._id ? (
                 <Form.Control
-                  as="textarea"
-                  rows={3}
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
+                  type="text"
+                  defaultValue={n.text}
+                  className="mt-2"
+                  onBlur={(e) => handleEditNote(n._id, e.target.value)}
                 />
-              </Form.Group>
-            </div>
-          )}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDetail(false)}>
-            Mbyll
-          </Button>
-          <Button variant="success" onClick={handleAddNote}>
-            Ruaj Shënimin
-          </Button>
-        </Modal.Footer>
-      </Modal>
+              ) : (
+                <p className="mt-2">{n.text}</p>
+              )}
+            </Card>
+          ))
+        ) : (
+          <p>Nuk ka shënime të mëparshme.</p>
+        )}
+
+        {/* ---------------- Shto një shënim të ri ---------------- */}
+        <hr />
+        <Form.Group className="mb-2">
+          <Form.Label>Shto një shënim të ri</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={3}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group className="mb-2">
+          <Form.Label>Status i sugjeruar (opsional)</Form.Label>
+          <Form.Select
+            value={suggestedStatus}
+            onChange={(e) => setSuggestedStatus(e.target.value)}
+          >
+            <option value="">Zgjidh Status</option>
+            <option value="I Ri">I Ri</option>
+            <option value="Në Progres">Në Progres</option>
+            <option value="Në Mentorim">Në Mentorim</option>
+            <option value="Në Prezantim">Në Prezantim</option>
+            <option value="Në Implementim">Në Implementim</option>
+            <option value="Zbatuar">Zbatuar</option>
+          </Form.Select>
+        </Form.Group>
+      </>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <ToastContainer
+  position="top-right"
+  autoClose={3000}
+  hideProgressBar={false}
+  newestOnTop={true}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+/>
+
+    <Button variant="secondary" onClick={() => setShowDetail(false)}>
+      Mbyll
+    </Button>
+    <Button variant="success" onClick={handleAddNote}>
+      Ruaj Shënimin
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </div>
   );
 };

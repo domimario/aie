@@ -4,6 +4,9 @@ const dotenv = require("dotenv");
 const userRoutes = require("./routes/userRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
 const cors = require("cors");
+const path = require("path");
+
+
 
 dotenv.config();
 
@@ -19,6 +22,8 @@ app.use(
 //routes
 app.use("/api/users", userRoutes);
 app.use("/api/applications", applicationRoutes);
+app.use("/uploads", express.static("uploads"));
+
 
 const PORT = process.env.PORT || 5000;
 
@@ -32,10 +37,6 @@ mongoose
   .catch((err) => console.error("MongoDB connection error: ", err));
 
 
-app.get("/", (req, res) => {
-  res.send("Server & MongoDB are running...");
-});
+app.get("/", (req, res) => {  res.send("Server & MongoDB are running...");});
 
-app.listen(PORT, () => {
-  console.log(` Server is running on port ${PORT}`);
-});
+app.listen(PORT, () => {console.log(` Server is running on port ${PORT}`);});

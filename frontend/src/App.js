@@ -9,6 +9,7 @@ import Register from "./pages/Register";
 import DashboardExecutive from "./pages/DashboardExecutive";
 import DashboardExpert from "./pages/DashboardExpert";
 import ApplicationDetails from "./pages/ApplicationDetails";
+import CreateExpert from "./pages/createEkspert";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard-executive" element={<DashboardExecutive />} />
         <Route path="/dashboard-ekspert" element={<DashboardExpert />} />
+        <Route path="/create-expert" element={<CreateExpert />} />
         <Route path="/application/:id" element={<ApplicationDetails />} />
       </Routes>
     </Router>

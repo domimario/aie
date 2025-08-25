@@ -2,13 +2,12 @@ const mongoose = require("mongoose");
 
 const applicationSchema = new mongoose.Schema(
   {
-    fullName: { type: String, required: true },
-    email: { type: String, required: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    email: { type: String, required: true, match: /.+\@.+\..+/ },
     phone: { type: String, required: true },
-
     projectTitle: { type: String, required: true },
     description: { type: String, required: true, minlength: 100 },
-
     innovationFields: {
       type: [String],
       required: true,
@@ -24,22 +23,25 @@ const applicationSchema = new mongoose.Schema(
         "Fusha nën Përgjegjesinë e Kryeministrit",
       ],
     },
-
     ageGroup: {
       type: String,
       required: true,
       enum: ["Nxënës (15-18)", "Studentë (19-24)", "Profesionistë (25-29)"],
     },
-
     municipality: { type: String, required: true },
-
     documents: {
-      type: [String], // URLs for uploaded documents (max 5)
+      type: [
+        {
+          url: { type: String, required: true },
+          name: { type: String },
+          type: { type: String }, 
+          size: { type: Number }, 
+          uploadedAt: { type: Date, default: Date.now },
+        },
+      ],
       validate: [arrayLimit, "{PATH} exceeds the limit of 5"],
     },
-
-    prototypeUrl: { type: String, required: false },
-
+    prototypeUrl: { type: String, required: false, match: /^(http|https):\/\/.*/ },
     status: {
       type: String,
       enum: [
@@ -52,13 +54,11 @@ const applicationSchema = new mongoose.Schema(
       ],
       default: "I Ri",
     },
-
     assignedExpert: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
     },
-
     notes: [
       {
         text: String,
@@ -66,7 +66,7 @@ const applicationSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
         },
-        fromRole: String,
+        fromRole: { type: String }, // keep as string for now to avoid conflicts
         createdBy: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
@@ -88,18 +88,17 @@ const applicationSchema = new mongoose.Schema(
         },
       },
     ],
-
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: null, // null if public (not logged in) submission
+      default: null, // null if public submission
     },
   },
   { timestamps: true }
 );
 
+// max 5 docs
 function arrayLimit(val) {
   return val.length <= 5;
 }
-
 module.exports = mongoose.model("Application", applicationSchema);

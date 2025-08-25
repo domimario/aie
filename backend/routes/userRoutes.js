@@ -1,4 +1,3 @@
-// routes/userRoutes.js
 const express = require("express");
 const router = express.Router();
 const {
@@ -6,15 +5,17 @@ const {
   loginUser,
   getProfile,
   createExpert,
+  getAllExperts
 } = require("../controllers/userController");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, authorize } = require("../middleware/authMiddleware");
 
-// Public
-router.post("/register", registerUser);
+// Public routes
+router.post("/register", registerUser); // only creates Executive
 router.post("/login", loginUser);
 
-// Private
+// Protected routes
 router.get("/profile", protect, getProfile);
-router.post("/create-expert", protect, createExpert); // protected route
+router.post("/create-expert", protect, authorize("Executive"), createExpert);
+router.get("/experts", protect, getAllExperts);
 
 module.exports = router;

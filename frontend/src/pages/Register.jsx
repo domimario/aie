@@ -1,53 +1,31 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {
-  Form,
-  Button,
-  Container,
-  Row,
-  Col,
-  Card,
-  Alert,
-} from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Register() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "Ekspert", 
-  });
-
-  const [error, setError] = useState("");
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/users/register",
-        form,
-        { headers: { "Content-Type": "application/json" } }
-      );
+      await axios.post("http://localhost:5000/api/users/register", form, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data));
-
-      alert("Regjistrimi u krye me sukses!");
-      navigate("/");
+      toast.success("Executive account created successfully!");
+      setTimeout(() => navigate("/login"), 1500); // navigate after showing toast
     } catch (err) {
-      setError(
-        err.response?.data?.message || "Ndodhi një gabim gjatë regjistrimit!"
-      );
+      const message = err.response?.data?.message || "Error during registration!";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -58,18 +36,15 @@ export default function Register() {
       <Row>
         <Col>
           <Card className="p-4 shadow-lg" style={{ minWidth: "380px" }}>
-            <h2 className="text-center mb-4 gradient-text">Krijo Llogari</h2>
-            {error && <Alert variant="danger">{error}</Alert>}
-
+            <h2 className="text-center mb-4 gradient-text">Register Executive</h2>
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3">
-                <Form.Label>Emri</Form.Label>
+                <Form.Label>Name</Form.Label>
                 <Form.Control
                   type="text"
                   name="name"
                   value={form.name}
                   onChange={handleChange}
-                  placeholder="Shkruaj emrin"
                   required
                 />
               </Form.Group>
@@ -81,48 +56,40 @@ export default function Register() {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
-                  placeholder="shembull@email.com"
                   required
                 />
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Fjalëkalimi</Form.Label>
+                <Form.Label>Password</Form.Label>
                 <Form.Control
                   type="password"
                   name="password"
                   value={form.password}
                   onChange={handleChange}
-                  placeholder="Zgjidh një fjalëkalim"
-                  minLength="6"
+                  minLength={6}
                   required
                 />
               </Form.Group>
 
-              <Form.Group className="mb-4">
-                <Form.Label>Roli</Form.Label>
-                <Form.Select
-                  name="role"
-                  value={form.role}
-                  onChange={handleChange}
-                >
-                  <option value="Ekspert">Ekspert</option>
-                  <option value="Executive">Executive</option>
-                </Form.Select>
-              </Form.Group>
-
-              <Button
-                variant="primary"
-                type="submit"
-                className="w-100"
-                disabled={loading}
-              >
-                {loading ? "Duke regjistruar..." : "Regjistrohu"}
+              <Button type="submit" className="w-100" disabled={loading}>
+                {loading ? "Registering..." : "Register"}
               </Button>
             </Form>
           </Card>
         </Col>
       </Row>
+
+      {/* Toast Container */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+      />
     </Container>
   );
 }
