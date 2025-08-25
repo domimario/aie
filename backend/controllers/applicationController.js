@@ -15,7 +15,7 @@ const submitApplication = async (req, res) => {
       prototypeUrl,
     } = req.body;
 
-    console.log(req.body)
+
     if (
       !firstName || !lastName || !email || !phone ||
       !projectTitle || !description || !innovationFields ||
