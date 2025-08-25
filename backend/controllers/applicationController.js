@@ -15,7 +15,6 @@ const submitApplication = async (req, res) => {
       prototypeUrl,
     } = req.body;
 
-    // Basic validations
     if (
       !firstName || !lastName || !email || !phone ||
       !projectTitle || !description || !innovationFields ||

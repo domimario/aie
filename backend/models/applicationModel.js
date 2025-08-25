@@ -66,7 +66,7 @@ const applicationSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
         },
-        fromRole: { type: String }, // keep as string for now to avoid conflicts
+        fromRole: { type: String }, 
         createdBy: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
@@ -91,7 +91,7 @@ const applicationSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: null, // null if public submission
+      default: null, 
     },
   },
   { timestamps: true }
