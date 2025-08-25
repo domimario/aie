@@ -4,6 +4,8 @@ import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "../utils/axiosConfig"; 
+
 
 export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -13,23 +15,20 @@ export default function Register() {
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      await axios.post("http://localhost:5000/api/users/register", form, {
-        headers: { "Content-Type": "application/json" },
-      });
-
-      toast.success("Executive account created successfully!");
-      setTimeout(() => navigate("/login"), 1500); // navigate after showing toast
-    } catch (err) {
-      const message = err.response?.data?.message || "Error during registration!";
-      toast.error(message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    await api.post("/users/register", form); // use relative path
+    toast.success("Executive account created successfully!");
+    setTimeout(() => navigate("/login"), 1500);
+  } catch (err) {
+    const message = err.response?.data?.message || "Error during registration!";
+    toast.error(message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">

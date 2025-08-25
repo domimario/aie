@@ -6,6 +6,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import api from "../utils/axiosConfig"; 
 
 // Options
 const municipalities = [
@@ -92,15 +93,11 @@ const Apply = () => {
                   formData.append("documents", file);
                 });
 
-                await axios.post(
-                  "http://localhost:5000/api/applications/submit",
-                  formData,
-                  { 
-                    headers: { 
-                      "Content-Type": 'application/json' 
-                    } 
-                  }
-                );
+                await api.post("/applications/submit", formData, {
+                    headers: {
+                       "Content-Type": "multipart/form-data", // since you're sending files
+                      },
+                });
 
                 toast.success("Aplikimi u dërgua me sukses!");
                 resetForm();
