@@ -16,7 +16,7 @@ export default function CreateExpert() {
     setError("");
     setSuccess("");
     try {
-      await api.post("/users/create-expert", form);
+      await api.post("/api/users/create-expert", form);
       setSuccess("Ekspert account created successfully!");
       setForm({ name: "", email: "", password: "" });
 

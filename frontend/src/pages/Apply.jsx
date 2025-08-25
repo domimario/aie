@@ -93,7 +93,7 @@ const Apply = () => {
                   formData.append("documents", file);
                 });
 
-                await api.post("/applications/submit", formData, {
+                await api.post("/api/applications/submit", formData, {
                     headers: {
                        "Content-Type": "multipart/form-data", // since you're sending files
                       },

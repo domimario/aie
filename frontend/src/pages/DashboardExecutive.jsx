@@ -30,7 +30,7 @@ const DashboardExecutive = () => {
 
   const fetchExperts = async () => {
     try {
-      const res = await api.get("/users/experts");
+      const res = await api.get("/api/users/experts");
       setExperts(res.data);
     } catch (err) {
       toast.error("Nuk mund të marrim listën e ekspertëve.");
@@ -39,7 +39,7 @@ const DashboardExecutive = () => {
 
   const fetchApplications = async () => {
     try {
-      const res = await api.get("/applications");
+      const res = await api.get("/api/applications");
       setApplications(res.data);
 
       const total = res.data.length;
@@ -66,7 +66,7 @@ const DashboardExecutive = () => {
     if (!expertId) return toast.warn("Zgjidhni një ekspert për projektin.");
 
     try {
-      await api.put(`/applications/${selectedApp._id}/assign-expert`, { expertId });
+      await api.put(`/api/applications/${selectedApp._id}/assign-expert`, { expertId });
       toast.success("Eksperti u caktua me sukses!");
       setShowAssign(false);
       setExpertId("");
@@ -81,7 +81,7 @@ const DashboardExecutive = () => {
     if (!newStatus) return toast.warn("Zgjidh statusin për ndryshim.");
 
     try {
-      await api.put(`/applications/${selectedApp._id}/status`, { status: newStatus });
+      await api.put(`/api/applications/${selectedApp._id}/status`, { status: newStatus });
       toast.success("Statusi u ndryshua me sukses!");
       setShowStatus(false);
       fetchApplications();

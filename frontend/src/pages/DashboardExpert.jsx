@@ -38,7 +38,7 @@ const DashboardExpert = () => {
 
   const fetchMyApplications = async () => {
     try {
-      const res = await api.get("/applications/my");
+      const res = await api.get("/api/applications/my");
       setApplications(res.data);
 
       const total = res.data.length;
@@ -69,7 +69,7 @@ const handleAddNote = async () => {
 
   try {
     const res = await api.post(
-      `/applications/${selectedApp._id}/add-note`,
+      `/api/applications/${selectedApp._id}/add-note`,
       {
         text: note,
         suggestedStatus: suggestedStatus || null,
@@ -92,7 +92,7 @@ const handleEditNote = async (noteId, newText) => {
 
   try {
     const res = await api.put(
-      `/applications/${selectedApp._id}/edit-note/${noteId}`,
+      `/api/applications/${selectedApp._id}/edit-note/${noteId}`,
       { text: newText }
     );
     toast.info("Shënimi u përditësua!");
@@ -217,7 +217,7 @@ const handleEditNote = async (noteId, newText) => {
     {selectedApp && (
       <>
         {/* ---------------- Detajet e Projektit ---------------- */}
-        <Card className="mb-3 shadow-sm p-3">
+        <Card className="mb-3 p-3 text-black">
           <p><b>Titulli:</b> {selectedApp.projectTitle}</p>
           <p><b>Përshkrimi:</b> {selectedApp.description}</p>
           <p><b>Fushat:</b> {selectedApp.innovationFields.join(", ")}</p>
